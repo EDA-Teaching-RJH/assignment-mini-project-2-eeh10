@@ -3,6 +3,10 @@ class Character:
         self.name = name
         self.alias = alias
         self.villain = villain
-        self.abilities = abilities
+        self.abilities = abilities  
         self.first_appearance = first_appearance
+    def __str__(self):
+        return f"{self.alias} ({self.name}) - {'Villain' if self.villain else 'Hero'}"
+    def add_ability(self, new_ability):
+        self.abilities.append(new_ability)
 
