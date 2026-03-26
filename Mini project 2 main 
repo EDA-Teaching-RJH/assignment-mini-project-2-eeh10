@@ -1,0 +1,8 @@
+class Character:
+    def __init__(self, name, alias, villain=False, abilities=[], first_appearance="Unknown"):
+        self.name = name
+        self.alias = alias
+        self.villain = villain
+        self.abilities = abilities
+        self.first_appearance = first_appearance
+
