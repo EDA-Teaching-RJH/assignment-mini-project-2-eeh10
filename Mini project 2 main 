@@ -9,4 +9,12 @@ class Character:
         return f"{self.alias} ({self.name}) - {'Villain' if self.villain else 'Hero'}"
     def add_ability(self, new_ability):
         self.abilities.append(new_ability)
+    def to_dict(self):
+        return {
+            "name": self.name,
+            "alias": self.alias,
+            "villain": self.villain,
+            "abilities": self.abilities,
+            "first_appearance": self.first_appearance
+        }
 
