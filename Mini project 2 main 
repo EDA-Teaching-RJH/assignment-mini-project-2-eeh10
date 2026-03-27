@@ -36,4 +36,13 @@ class Database:
         f = open(self.filename, "w")
         json.dump(chars, f)
         f.close()
+    def load(self):
+        try:
+            f = open(self.filename, "r")
+            data = json.load(f)
+            f.close()
+            for alias, char_data in data.items():
+                self.characters[alias] = Character.from_dict(char_data)
+        except:
+            self.characters = {}
 
