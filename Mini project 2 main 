@@ -20,3 +20,11 @@ class Character:
     def from_dict(data):
         return Character(data["name"], data["alias"], data["villain"], data["abilities"], data["first_appearance"])
 
+import json
+from models import Character
+class Database:
+    def __init__(self, filename="db.json"):
+        self.filename = filename
+        self.characters = {}
+        self.load()
+
