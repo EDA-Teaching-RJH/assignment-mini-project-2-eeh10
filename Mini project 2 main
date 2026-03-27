@@ -1,0 +1,132 @@
+class Character:
+    def __init__(self, name, alias, villain=False, abilities=[], first_appearance="Unknown"):
+        self.name = name
+        self.alias = alias
+        self.villain = villain
+        self.abilities = abilities  
+        self.first_appearance = first_appearance
+    def __str__(self):
+        return f"{self.alias} ({self.name}) - {'Villain' if self.villain else 'Hero'}"
+    def add_ability(self, new_ability):
+        self.abilities.append(new_ability)
+    def to_dict(self):
+        return {
+            "name": self.name,
+            "alias": self.alias,
+            "villain": self.villain,
+            "abilities": self.abilities,
+            "first_appearance": self.first_appearance
+        }
+    def from_dict(data):
+        return Character(data["name"], data["alias"], data["villain"], data["abilities"], data["first_appearance"])
+
+import json
+from models import Character
+class Database:
+    def __init__(self, filename="db.json"):
+        self.filename = filename
+        self.characters = {}
+        self.load()
+    def add_character(self, char):
+        self.characters[char.alias] = char
+    def save(self):
+        chars = {}
+        for alias in self.characters:
+            chars[alias] = self.characters[alias].to_dict()
+        f = open(self.filename, "w")
+        json.dump(chars, f)
+        f.close()
+    def load(self):
+        try:
+            f = open(self.filename, "r")
+            data = json.load(f)
+            f.close()
+            for alias, char_data in data.items():
+                self.characters[alias] = Character.from_dict(char_data)
+        except:
+            self.characters = {}
+    def delete_character(self, alias):
+        if alias in self.characters:
+            del self.characters[alias]
+        else:
+            print("Character not found")
+    def show_all(self):
+        for alias, c in self.characters.items():
+            print(c)
+
+import re
+class Search:
+    def __init__(self, db):
+        self.db = db
+    def find_name(self, txt):
+        found = []
+        for alias, char in self.db.characters.items():
+            if re.search(txt, char.name, re.IGNORECASE) or re.search(txt, char.alias, re.IGNORECASE):
+                found.append(char)
+        return found
+    def find_ability(self, word):
+        result = []
+        for alias, c in self.db.characters.items():
+            for ability in c.abilities:
+                if re.match(".*" + word + ".*", ability, re.IGNORECASE):
+                    result.append(c)
+                    break
+        return result
+    def extract_year(self, char):
+        match = re.findall(r"\d{4}", char.first_appearance)
+        if match:
+            return match[0]
+        else:
+            return None
+
+
+import pytest
+from models import Character
+from database import Database
+from search import Search
+def test_basic_character():
+    c = Character("Bruce Wayne", "Batman", False, ["Detective skills"])
+    assert c.name == "Bruce Wayne"
+    assert "Detective" in c.abilities[0]
+def test_add_ability():
+    c = Character("Bruce Wayne", "Batman")
+    c.add_ability("Martial Arts")
+    assert "Martial Arts" in c.abilities
+def test_database_add_and_save(tmp_path):
+    path = tmp_path / "test.json"
+    db = Database(str(path))
+    char = Character("Bruce Wayne", "Batman")
+    db.add_character(char)
+    db.save()
+    db2 = Database(str(path))
+    assert "Batman" in db2.characters
+def test_find_name(tmp_path):
+    path = tmp_path / "data.json"
+    db = Database(str(path))
+    db.add_character(Character("Bruce Wayne", "Batman"))
+    db.add_character(Character("Unknown", "Joker", True))
+    db.save()
+    s = Search(db)
+    results = s.find_name("joker")
+    assert len(results) == 1
+def test_extract_year():
+    c = Character("Bruce Wayne", "Batman", False, [], "Detective Comics #27 (1939)")
+    s = Search(None)
+    year = s.extract_year(c)
+    assert year == "1939"
+
+from models import Character
+from database import Database
+from search import Search
+db = Database("characters.json")
+batman = Character("Bruce Wayne", "Batman", False, ["Martial arts", "Wealth"], "Detective Comics #27 (1939)")
+joker = Character("Unknown", "Joker", True, ["Chemistry", "Trickery"], "Batman #1 (1940)")
+catwoman = Character("Selina Kyle", "Catwoman", False, ["Thief skills", "Acrobatics"], "Batman #1 (1940)")
+riddler = Character("Edward Nygma", "The Riddler", True, ["Riddles", "Intelligence"], "Detective Comics #140 (1948)")
+db.add_character(batman)
+db.add_character(joker)
+db.save()
+searcher = Search(db)
+found = searcher.find_name("man")
+for f in found:
+    print(f)
