@@ -114,3 +114,19 @@ def test_extract_year():
     s = Search(None)
     year = s.extract_year(c)
     assert year == "1939"
+
+from models import Character
+from database import Database
+from search import Search
+db = Database("characters.json")
+batman = Character("Bruce Wayne", "Batman", False, ["Martial arts", "Wealth"], "Detective Comics #27 (1939)")
+joker = Character("Unknown", "Joker", True, ["Chemistry", "Trickery"], "Batman #1 (1940)")
+catwoman = Character("Selina Kyle", "Catwoman", False, ["Thief skills", "Acrobatics"], "Batman #1 (1940)")
+riddler = Character("Edward Nygma", "The Riddler", True, ["Riddles", "Intelligence"], "Detective Comics #140 (1948)")
+db.add_character(batman)
+db.add_character(joker)
+db.save()
+searcher = Search(db)
+found = searcher.find_name("man")
+for f in found:
+    print(f)
