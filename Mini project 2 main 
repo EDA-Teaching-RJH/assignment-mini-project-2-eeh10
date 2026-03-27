@@ -17,4 +17,6 @@ class Character:
             "abilities": self.abilities,
             "first_appearance": self.first_appearance
         }
+    def from_dict(data):
+        return Character(data["name"], data["alias"], data["villain"], data["abilities"], data["first_appearance"])
 
