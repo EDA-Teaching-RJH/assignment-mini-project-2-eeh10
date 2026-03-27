@@ -64,4 +64,12 @@ class Search:
             if re.search(txt, char.name, re.IGNORECASE) or re.search(txt, char.alias, re.IGNORECASE):
                 found.append(char)
         return found
+    def find_ability(self, word):
+        result = []
+        for alias, c in self.db.characters.items():
+            for ability in c.abilities:
+                if re.match(".*" + word + ".*", ability, re.IGNORECASE):
+                    result.append(c)
+                    break
+        return result
 
