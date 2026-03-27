@@ -27,4 +27,13 @@ class Database:
         self.filename = filename
         self.characters = {}
         self.load()
+    def add_character(self, char):
+        self.characters[char.alias] = char
+    def save(self):
+        chars = {}
+        for alias in self.characters:
+            chars[alias] = self.characters[alias].to_dict()
+        f = open(self.filename, "w")
+        json.dump(chars, f)
+        f.close()
 
