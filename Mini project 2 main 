@@ -79,3 +79,12 @@ class Search:
         else:
             return None
 
+
+import pytest
+from models import Character
+from database import Database
+from search import Search
+def test_basic_character():
+    c = Character("Bruce Wayne", "Batman", False, ["Detective skills"])
+    assert c.name == "Bruce Wayne"
+    assert "Detective" in c.abilities[0]
