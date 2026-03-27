@@ -45,4 +45,12 @@ class Database:
                 self.characters[alias] = Character.from_dict(char_data)
         except:
             self.characters = {}
+    def delete_character(self, alias):
+        if alias in self.characters:
+            del self.characters[alias]
+        else:
+            print("Character not found")
+    def show_all(self):
+        for alias, c in self.characters.items():
+            print(c)
 
