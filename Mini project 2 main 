@@ -54,3 +54,14 @@ class Database:
         for alias, c in self.characters.items():
             print(c)
 
+import re
+class Search:
+    def __init__(self, db):
+        self.db = db
+    def find_name(self, txt):
+        found = []
+        for alias, char in self.db.characters.items():
+            if re.search(txt, char.name, re.IGNORECASE) or re.search(txt, char.alias, re.IGNORECASE):
+                found.append(char)
+        return found
+
