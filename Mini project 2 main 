@@ -72,4 +72,10 @@ class Search:
                     result.append(c)
                     break
         return result
+    def extract_year(self, char):
+        match = re.findall(r"\d{4}", char.first_appearance)
+        if match:
+            return match[0]
+        else:
+            return None
 
