@@ -88,3 +88,15 @@ def test_basic_character():
     c = Character("Bruce Wayne", "Batman", False, ["Detective skills"])
     assert c.name == "Bruce Wayne"
     assert "Detective" in c.abilities[0]
+def test_add_ability():
+    c = Character("Bruce Wayne", "Batman")
+    c.add_ability("Martial Arts")
+    assert "Martial Arts" in c.abilities
+def test_database_add_and_save(tmp_path):
+    path = tmp_path / "test.json"
+    db = Database(str(path))
+    char = Character("Bruce Wayne", "Batman")
+    db.add_character(char)
+    db.save()
+    db2 = Database(str(path))
+    assert "Batman" in db2.characters
